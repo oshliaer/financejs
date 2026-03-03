@@ -7,5 +7,6 @@
     "module": "NodeNext",
     "skipLibCheck": true
   },
-  "include": ["./**/*.js"]
+  "include": ["./**/*.js"],
+  "exclude": ["coverage/"]
 }

@@ -12,8 +12,10 @@ library, but modernizes the implementation and tooling:
 - Native ESM
 - Named function exports (no class wrapper)
 - Native error handling
-- Strict type-checking for JavaScript
+- Strict type-checking
+- JSDoc documentation
 - Vitest-based test suite
+- 100% test coverage
 - ESLint + Prettier setup
 
 ## Installation

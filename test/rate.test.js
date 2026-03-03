@@ -162,22 +162,25 @@ const rateSuccessCases = [
   [302, 19266, -5801819, 8113, 1, undefined, 0.0000281241798927375],
   [130, 14003, -1516279, 4875, 1, undefined, 0.00296808568570917],
   [300, 13403, -3355734, 858, undefined, undefined, 0.00124183794007236],
+  [10, 1000, -10000, 0, 0, 0, 0],
 ];
 
 /** @type {[number, number, number, number | undefined, 0 | 1 | undefined, number | undefined][]} */
 const rateErrorCases = [
   [-1, 333, -1000, 22, undefined, undefined],
+  [1, 0, 0, 0, 0, 0.1],
+  [39, 21597, 4605776, undefined, 0, 0.11296164981663548],
 ];
 
 test.each(rateSuccessCases)(
-  'rate() matches Excel to 8 decimal places',
+  "rate() matches Excel to 8 decimal places",
   (nper, pmt, pv, fv, type, guess, expected) => {
     expect(rate(nper, pmt, pv, fv, type, guess)).toBeCloseTo(expected, 8);
   },
 );
 
 test.each(rateErrorCases)(
-  'rate() throws RangeError for invalid inputs',
+  "rate() throws RangeError for invalid inputs",
   (nper, pmt, pv, fv, type, guess) => {
     expect(() => rate(nper, pmt, pv, fv, type, guess)).toThrow(RangeError);
   },

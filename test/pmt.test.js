@@ -8,6 +8,7 @@ test.each(
     [0.0275, 10, -25566, 500, undefined, 2914.88183332968],
     [0.025 / 12, 180, -55555, 1000, 1, 365.089583010248],
     [0.22, 1, -15000, undefined, undefined, 18300.0],
+    [0, 10, -10000, undefined, undefined, 1000],
   ]),
 )(
   "pmt() matches Excel to 8 decimal places",
