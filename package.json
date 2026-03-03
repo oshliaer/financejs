@@ -1,0 +1,25 @@
+{
+  "name": "finance",
+  "version": "0.1.0",
+  "description": "",
+  "exports": "./src/index.js",
+  "scripts": {
+    "test": "vitest --run",
+    "lint": "eslint .",
+    "lint:types": "tsc --noEmit",
+    "format": "prettier --write ."
+  },
+  "keywords": [],
+  "author": "Travis Horn <travis@travishorn.com> (https://travishorn.com/)",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.4.0",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}
