@@ -1,3 +1,5 @@
+import { normalizeZero } from "./normalizeZero.js";
+
 /**
  * Evaluates the RATE equation for a candidate rate.
  *
@@ -66,7 +68,7 @@ export function rate(nper, pmt, pv, fv = 0, type = 0, guess = 0.1) {
     y0 = evalRate(rate0, nper, pmt, pv, fv, type);
 
     if (Math.abs(y0) < epsilonMax) {
-      return rate0;
+      return normalizeZero(rate0);
     }
 
     const nextY = y0;

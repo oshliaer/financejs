@@ -1,3 +1,5 @@
+import { normalizeZero } from "./normalizeZero.js";
+
 /**
  * Calculates the periodic payment for a loan or investment.
  *
@@ -10,16 +12,16 @@
  */
 export function pmt(rate, nper, pv, fv = 0, type = 0) {
   if (rate === 0) {
-    return (-fv - pv) / nper;
+    return normalizeZero((-fv - pv) / nper);
   } else {
     const paymentTimingFactor = type !== 0 ? 1 + rate : 1;
     const interestFactor = 1 + rate;
     const compoundFactor = Math.pow(interestFactor, nper);
 
-    return (
+    return normalizeZero(
       ((-fv - pv * compoundFactor) /
         (paymentTimingFactor * (compoundFactor - 1))) *
-      rate
+        rate,
     );
   }
 }

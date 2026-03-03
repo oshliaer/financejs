@@ -1,3 +1,5 @@
+import { normalizeZero } from "./normalizeZero.js";
+
 /**
  * Calculates the number of periods for an investment/loan.
  *
@@ -15,7 +17,7 @@ export function nper(rate, pmt, pv, fv = 0, type = 0) {
       throw new RangeError("Payment cannot be 0 when rate is 0.");
     }
 
-    return -(pv + fv) / pmt;
+    return normalizeZero(-(pv + fv) / pmt);
   }
 
   const paymentAdjustment = type !== 0 ? pmt * (1 + rate) : pmt;
@@ -34,8 +36,8 @@ export function nper(rate, pmt, pv, fv = 0, type = 0) {
 
   const growthFactor = 1 + rate;
 
-  return (
+  return normalizeZero(
     (Math.log(futureValueTerm) - Math.log(presentValueTerm)) /
-    Math.log(growthFactor)
+      Math.log(growthFactor),
   );
 }

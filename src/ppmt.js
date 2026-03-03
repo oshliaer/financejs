@@ -1,4 +1,5 @@
 import { ipmt } from "./ipmt.js";
+import { normalizeZero } from "./normalizeZero.js";
 import { pmt } from "./pmt.js";
 
 /**
@@ -21,5 +22,5 @@ export function ppmt(rate, per, nper, pv, futureValue = 0, type = 0) {
   const periodicPayment = pmt(rate, nper, pv, futureValue, type);
   const interestPayment = ipmt(rate, per, nper, pv, futureValue, type);
 
-  return periodicPayment - interestPayment;
+  return normalizeZero(periodicPayment - interestPayment);
 }
