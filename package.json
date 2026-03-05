@@ -20,6 +20,7 @@
     "access": "public"
   },
   "scripts": {
+    "docs": "typedoc --entryPoints src/index.js --out docs",
     "format": "prettier --write .",
     "lint:format": "prettier --check .",
     "lint:types": "tsc --noEmit",
@@ -48,6 +49,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.4.0",
     "prettier": "^3.8.1",
+    "typedoc": "^0.28.17",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   }
