@@ -1,3 +1,13 @@
+import {
+  coupdaybs,
+  coupdays,
+  coupdaysnc,
+  couponsRemaining,
+  getCouponBounds,
+  normalizeZero,
+  toUtcDate,
+} from "./util.js";
+
 /**
  * Calculates the yield on a security that pays periodic interest. Use to
  * calculate bond yield.
@@ -118,7 +128,7 @@ export function yield_(
       (pr / 100 + (a / e) * (rate / frequency));
     const denominator = pr / 100 + (a / e) * (rate / frequency);
     const result = (numerator / denominator) * ((frequency * e) / dsc);
-    return normalizeNegativeZero(result);
+    return normalizeZero(result);
   }
 
   /** @param {number} candidateYield */
@@ -150,7 +160,7 @@ export function yield_(
 
   for (let iteration = 0; iteration < maxIterations; iteration += 1) {
     if (Math.abs(f1) < epsilon) {
-      return normalizeNegativeZero(y1);
+      return normalizeZero(y1);
     }
 
     if (f1 === f0) {
@@ -168,7 +178,7 @@ export function yield_(
     const f2 = priceFromYield(y2) - pr;
 
     if (Math.abs(f2) < epsilon) {
-      return normalizeNegativeZero(y2);
+      return normalizeZero(y2);
     }
 
     y0 = y1;
@@ -178,208 +188,4 @@ export function yield_(
   }
 
   throw new RangeError("Maximum iterations exceeded while calculating YIELD.");
-}
-
-/** @param {Date} date */
-function lastDayOfMonthUtc(date) {
-  return new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0),
-  ).getUTCDate();
-}
-
-/**
- * Month arithmetic that preserves end-of-month behavior for coupon schedules.
- *
- * @param {Date} date
- * @param {number} months
- */
-function addMonthsUtc(date, months) {
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth();
-  const day = date.getUTCDate();
-  const isEndOfMonth = day === lastDayOfMonthUtc(date);
-
-  const monthIndex = month + months;
-  const newYear = year + Math.floor(monthIndex / 12);
-  const newMonth = ((monthIndex % 12) + 12) % 12;
-  const monthEndDay = new Date(Date.UTC(newYear, newMonth + 1, 0)).getUTCDate();
-  const newDay = isEndOfMonth ? monthEndDay : Math.min(day, monthEndDay);
-
-  return new Date(Date.UTC(newYear, newMonth, newDay));
-}
-
-/**
- * @param {Date} settlementDate
- * @param {Date} maturityDate
- * @param {number} monthsPerCoupon
- */
-function getCouponBounds(settlementDate, maturityDate, monthsPerCoupon) {
-  let nextCouponDate = new Date(maturityDate.getTime());
-  let previousCouponDate = addMonthsUtc(nextCouponDate, -monthsPerCoupon);
-
-  while (settlementDate < previousCouponDate) {
-    nextCouponDate = previousCouponDate;
-    previousCouponDate = addMonthsUtc(nextCouponDate, -monthsPerCoupon);
-  }
-
-  // Excel treats settlement on a coupon date as the start of the next period.
-  if (settlementDate >= nextCouponDate) {
-    previousCouponDate = nextCouponDate;
-    nextCouponDate = addMonthsUtc(nextCouponDate, monthsPerCoupon);
-  }
-
-  return { previousCouponDate, nextCouponDate };
-}
-
-/**
- * @param {Date} nextCouponDate
- * @param {Date} maturityDate
- * @param {number} monthsPerCoupon
- */
-function couponsRemaining(nextCouponDate, maturityDate, monthsPerCoupon) {
-  let n = 1;
-  let current = new Date(nextCouponDate.getTime());
-
-  while (current < maturityDate) {
-    current = addMonthsUtc(current, monthsPerCoupon);
-    n += 1;
-  }
-
-  return n;
-}
-
-/**
- * @param {Date} settlementDate
- * @param {Date} nextCouponDate
- * @param {0|1|2|3|4} basis
- */
-function coupdaysnc(settlementDate, nextCouponDate, basis) {
-  if (basis === 0) {
-    return days360Us(settlementDate, nextCouponDate);
-  }
-
-  if (basis === 4) {
-    return days360Eu(settlementDate, nextCouponDate);
-  }
-
-  return actualDays(settlementDate, nextCouponDate);
-}
-
-/**
- * @param {Date} previousCouponDate
- * @param {Date} settlementDate
- * @param {0|1|2|3|4} basis
- */
-function coupdaybs(previousCouponDate, settlementDate, basis) {
-  if (basis === 0) {
-    return days360Us(previousCouponDate, settlementDate);
-  }
-
-  if (basis === 4) {
-    return days360Eu(previousCouponDate, settlementDate);
-  }
-
-  return actualDays(previousCouponDate, settlementDate);
-}
-
-/**
- * @param {Date} previousCouponDate
- * @param {Date} nextCouponDate
- * @param {number} frequency
- * @param {0|1|2|3|4} basis
- */
-function coupdays(previousCouponDate, nextCouponDate, frequency, basis) {
-  if (basis === 0 || basis === 4) {
-    return 360 / frequency;
-  }
-
-  if (basis === 3) {
-    return 365 / frequency;
-  }
-
-  return actualDays(previousCouponDate, nextCouponDate);
-}
-
-/**
- * Excel/NASD 30/360 day count.
- *
- * @param {Date} start
- * @param {Date} end
- */
-function days360Us(start, end) {
-  let d1 = start.getUTCDate();
-  let d2 = end.getUTCDate();
-  const m1 = start.getUTCMonth() + 1;
-  const m2 = end.getUTCMonth() + 1;
-  const y1 = start.getUTCFullYear();
-  const y2 = end.getUTCFullYear();
-
-  const startIsMonthEnd = d1 === lastDayOfMonthUtc(start);
-  const endIsMonthEnd = d2 === lastDayOfMonthUtc(end);
-
-  if (m1 === 2 && startIsMonthEnd) {
-    d1 = 30;
-  }
-  if (m2 === 2 && endIsMonthEnd && m1 === 2 && startIsMonthEnd) {
-    d2 = 30;
-  }
-
-  if (d2 === 31 && d1 >= 30) {
-    d2 = 30;
-  }
-  if (d1 === 31) {
-    d1 = 30;
-  }
-
-  return 360 * (y2 - y1) + 30 * (m2 - m1) + (d2 - d1);
-}
-
-/**
- * European 30/360 day count.
- *
- * @param {Date} start
- * @param {Date} end
- */
-function days360Eu(start, end) {
-  let d1 = start.getUTCDate();
-  let d2 = end.getUTCDate();
-
-  if (d1 === 31) {
-    d1 = 30;
-  }
-  if (d2 === 31) {
-    d2 = 30;
-  }
-
-  const m1 = start.getUTCMonth() + 1;
-  const m2 = end.getUTCMonth() + 1;
-  const y1 = start.getUTCFullYear();
-  const y2 = end.getUTCFullYear();
-
-  return 360 * (y2 - y1) + 30 * (m2 - m1) + (d2 - d1);
-}
-
-/**
- * @param {Date} start
- * @param {Date} end
- */
-function actualDays(start, end) {
-  const msPerDay = 24 * 60 * 60 * 1000;
-  return (end.getTime() - start.getTime()) / msPerDay;
-}
-
-/** @param {Date} value */
-function toUtcDate(value) {
-  if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
-    throw new RangeError("Settlement and maturity must be valid Date objects.");
-  }
-
-  return new Date(
-    Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate()),
-  );
-}
-
-/** @param {number} value */
-function normalizeNegativeZero(value) {
-  return Object.is(value, -0) ? 0 : value;
 }

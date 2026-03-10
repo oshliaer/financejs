@@ -1,6 +1,6 @@
 import { ipmt } from "./ipmt.js";
-import { normalizeZero } from "./normalizeZero.js";
 import { pmt } from "./pmt.js";
+import { normalizeZero } from "./util.js";
 
 /**
  * Calculates the payment on the principal for a given period for an investment

@@ -1,4 +1,4 @@
-import { normalizeZero } from "./normalizeZero.js";
+import { normalizeZero } from "./util.js";
 
 /**
  * Calculates the present value of a loan or an investment, based on a constant

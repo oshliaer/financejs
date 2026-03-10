@@ -1,4 +1,4 @@
-import { normalizeZero } from "./normalizeZero.js";
+import { normalizeZero } from "./util.js";
 
 /**
  * Calculates the payment for a loan based on constant payments and a constant

@@ -1,4 +1,4 @@
-import { normalizeZero } from "./normalizeZero.js";
+import { normalizeZero } from "./util.js";
 
 /**
  * Calculates the number of periods for an investment based on periodic,

@@ -1,4 +1,4 @@
-import { normalizeZero } from "./normalizeZero.js";
+import { normalizeZero } from "./util.js";
 
 /**
  * Calculates the future value of an investment based on a constant interest
