@@ -1,3 +1,6 @@
+export { coupdaybs } from "./coupdaybs.js";
+export { coupdays } from "./coupdays.js";
+export { coupdaysnc } from "./coupdaysnc.js";
 export { cumipmt } from "./cumipmt.js";
 export { cumprinc } from "./cumprinc.js";
 export { db } from "./db.js";
