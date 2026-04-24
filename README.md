@@ -113,7 +113,7 @@ Tiers 1-3 are complete.
 - **Tier 3:** ✓rri, ✓pduration, ✓vdb, ✓fvschedule, ✓dollarde, ✓dollarfr, ✓ispmt
 - **Tier 4:** ✓yield, ✓price, duration, mduration, disc, intrate, received,
   pricedisc, pricemat, yielddisc, yieldmat
-- **Tier 5:** all others
+- **Tier 5:** ✓coupdaybs, ✓coupdays, ✓coupdaysnc, all others
 
 ## License
 

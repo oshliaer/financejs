@@ -1,4 +1,5 @@
 import {
+  actualDays,
   coupdaybs,
   coupdays,
   coupdaysnc,
@@ -108,12 +109,16 @@ export function price(
 
   const a = coupdaybs(previousCouponDate, settlementDate, normalizedBasis);
   let dsc = coupdaysnc(settlementDate, nextCouponDate, normalizedBasis);
-  const e = coupdays(
+  let e = coupdays(
     previousCouponDate,
     nextCouponDate,
     frequency,
     normalizedBasis,
   );
+
+  if (normalizedBasis === 2) {
+    e = actualDays(previousCouponDate, nextCouponDate);
+  }
 
   if (normalizedBasis === 3) {
     dsc = e - a;
