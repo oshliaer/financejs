@@ -283,7 +283,7 @@ export function coupdaybs(previousCouponDate, settlementDate, basis) {
  * coupdays(new Date("2024-01-01"), new Date("2024-07-01"), 2, 3); // 182.5
  */
 export function coupdays(previousCouponDate, nextCouponDate, frequency, basis) {
-  if (basis === 0 || basis === 4) {
+  if (basis === 0 || basis === 2 || basis === 4) {
     return 360 / frequency;
   }
 

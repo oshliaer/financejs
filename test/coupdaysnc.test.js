@@ -16,9 +16,10 @@ test.each(
 )(
   "coupdaysnc() matches Excel to 8 decimal places",
   (settlement, maturity, frequency, basis, expected) => {
-    expect(
-      coupdaysnc(settlement, maturity, frequency, basis),
-    ).toBeCloseTo(expected, 8);
+    expect(coupdaysnc(settlement, maturity, frequency, basis)).toBeCloseTo(
+      expected,
+      8,
+    );
   },
 );
 
@@ -35,8 +36,8 @@ test.each(
 )(
   "coupdaysnc() throws RangeError for invalid inputs",
   (settlement, maturity, frequency, basis) => {
-    expect(() =>
-      coupdaysnc(settlement, maturity, frequency, basis),
-    ).toThrow(RangeError);
+    expect(() => coupdaysnc(settlement, maturity, frequency, basis)).toThrow(
+      RangeError,
+    );
   },
 );

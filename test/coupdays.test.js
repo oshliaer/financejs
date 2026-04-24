@@ -5,9 +5,7 @@ test.each(
   /** @type {[Date, Date, 1|2|4, 0|1|2|3|4 | undefined, number][]} */ ([
     [new Date("2026-01-25"), new Date("2026-11-15"), 2, 1, 181],
     [new Date("2026-01-25"), new Date("2026-11-15"), 2, 0, 180],
-    // BUG: basis=2 returns actual days (181) instead of 360/frequency (180).
-    // Root cause is in util.js:coupdays — also affects price() and yield_().
-    [new Date("2026-01-25"), new Date("2026-11-15"), 2, 2, 181],
+    [new Date("2026-01-25"), new Date("2026-11-15"), 2, 2, 180],
     [new Date("2026-01-25"), new Date("2026-11-15"), 2, 3, 182.5],
     [new Date("2026-01-25"), new Date("2026-11-15"), 2, 4, 180],
     [new Date("2026-01-25"), new Date("2026-11-15"), 1, 0, 360],
@@ -18,9 +16,10 @@ test.each(
 )(
   "coupdays() matches Excel to 8 decimal places",
   (settlement, maturity, frequency, basis, expected) => {
-    expect(
-      coupdays(settlement, maturity, frequency, basis),
-    ).toBeCloseTo(expected, 8);
+    expect(coupdays(settlement, maturity, frequency, basis)).toBeCloseTo(
+      expected,
+      8,
+    );
   },
 );
 
@@ -37,8 +36,8 @@ test.each(
 )(
   "coupdays() throws RangeError for invalid inputs",
   (settlement, maturity, frequency, basis) => {
-    expect(() =>
-      coupdays(settlement, maturity, frequency, basis),
-    ).toThrow(RangeError);
+    expect(() => coupdays(settlement, maturity, frequency, basis)).toThrow(
+      RangeError,
+    );
   },
 );
